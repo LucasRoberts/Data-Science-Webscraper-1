@@ -5,6 +5,7 @@ Description: I will be scrapping Glassdoor for job listings, grabbing certain it
 """
 import selenium.common.exceptions
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import time
@@ -14,7 +15,7 @@ def scrapper(jobs, location, num_of_jobs):
     """
     A scrapper for Glassdoor. Takes in 3 params and returns a Pandas DataFrame of
         Company Name, Job Title, Location, Pay, Job Age, Rating, Employee Count,
-        Company Age, Company Type, Industry, Sector, Revenue, and Description.
+        Company Age, Company Type, Industry, Sector, Revenue, and Description
     :param jobs: int
     :param location: String
     :param num_of_jobs: int
@@ -48,7 +49,7 @@ def scrapper(jobs, location, num_of_jobs):
     # If there is a location clicks on the searchbar, types in location, and enters
     if not no_loc:
         try:
-            search_button = driver.find_element_by_xpath("//input[@data-test='search-bar-location-input']")
+            search_button = driver.find_element(By.XPATH, "//input[@data-test='search-bar-location-input']")
             search_button.clear()
             search_button.send_keys(user_input_loc)
             search_button.send_keys(Keys.ENTER)
@@ -72,7 +73,7 @@ def scrapper(jobs, location, num_of_jobs):
     # Check how many jobs are on the page after user inputted job title
     time.sleep(5)
     try:
-        actual_jobs = driver.find_element_by_xpath("//div[@data-test='MainColSummary']/p[@data-test='jobsCount']").get_attribute("textContent")
+        actual_jobs = driver.find_element(By.XPATH, "//div[@data-test='MainColSummary']/p[@data-test='jobsCount']").get_attribute("textContent")
         actual_jobs = int(actual_jobs.strip(" jobs"))
     except selenium.common.exceptions.NoSuchElementException:
         print("Failed to find the number of jobs on the site.")
@@ -93,8 +94,8 @@ def scrapper(jobs, location, num_of_jobs):
 
     # Get rid of the pop-up
     try:
-        driver.find_element_by_class_name("react-job-listing").click()
-        driver.find_element_by_class_name("modal_closeIcon-svg").click()
+        driver.find_element(By.CLASS_NAME, "react-job-listing").click()
+        driver.find_element(By.CLASS_NAME, "modal_closeIcon-svg").click()
     except selenium.common.exceptions.NoSuchElementException:
         print("Failed to close pop up")
         running = False
@@ -108,42 +109,42 @@ def scrapper(jobs, location, num_of_jobs):
             tracker_for_jobs = jobs
             for job_number in range(1, jobs+1, 1):
                 try:
-                    driver.find_element_by_xpath(f"//li[{counter}]/div[2]").click()
+                    driver.find_element(By.XPATH, f"//li[{counter}]/div[2]").click()
                     print(f"Progress: ({job_number}/{tracker_for_jobs})")
 
                     # Grabs the company name
                     try:
-                        company_name = driver.find_element_by_xpath(f"//li[{counter}]/div[2]/div[1]/a[1]/span").text
+                        company_name = driver.find_element(By.XPATH, f"//li[{counter}]/div[2]/div[1]/a[1]/span").text
                     except selenium.common.exceptions.NoSuchElementException:
                         company_name = -1
 
                     # Grabs the title of the job
                     try:
-                        job_title = driver.find_element_by_xpath(f"//li[{counter}]/div[2]/a[1]/span").text
+                        job_title = driver.find_element(By.XPATH, f"//li[{counter}]/div[2]/a[1]/span").text
                     except selenium.common.exceptions.NoSuchElementException:
                         job_title = -1
 
                     # Grabs the location of the job
                     try:
-                        location = driver.find_element_by_xpath(f"//li[{counter}]/div[2]/div[2]/span").text
+                        location = driver.find_element(By.XPATH, f"//li[{counter}]/div[2]/div[2]/span").text
                     except selenium.common.exceptions.NoSuchElementException:
                         location = -1
 
                     # Grabs how much the salary is
                     try:
-                        pay = driver.find_element_by_xpath(f"//li[{counter}]/div[2]/div[3]/div[1]/span").text
+                        pay = driver.find_element(By.XPATH, f"//li[{counter}]/div[2]/div[3]/div[1]/span").text
                     except selenium.common.exceptions.NoSuchElementException:
                         pay = -1
 
                     # Grabs how long the job has been up
                     try:
-                        job_age = driver.find_element_by_xpath(f"//li[{counter}]/div[2]/div[3]/div[2]/div[2]").text
+                        job_age = driver.find_element(By.XPATH, f"//li[{counter}]/div[2]/div[3]/div[2]/div[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         job_age = -1
 
                     # Grabs the rating of the company x/5 stars
                     try:
-                        rating = driver.find_element_by_xpath(f"//li[{counter}]/div[1]/span").text
+                        rating = driver.find_element(By.XPATH, f"//li[{counter}]/div[1]/span").text
                         if rating == "":
                             rating = -1
                     except selenium.common.exceptions.NoSuchElementException:
@@ -151,46 +152,46 @@ def scrapper(jobs, location, num_of_jobs):
 
                     time.sleep(1)
 
-                    # These elements are grabbed from inside of the right panel body
+                    # These elements are grabbed from the inside of the right panel body
                     # Grabs the size of the company in terms of employees
                     try:
-                        employees = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[1]/span[2]").text
+                        employees = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[1]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         employees = -1
 
                     # Grabs when the company was founded
                     try:
-                        company_age = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[2]/span[2]").text
+                        company_age = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[2]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         company_age = -1
 
                     # Grabs whether the company is public or private
                     try:
-                        company_type = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[3]/span[2]").text
+                        company_type = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[3]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         company_type = -1
 
                     # Grabs the industry the company operates in
                     try:
-                        industry = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[4]/span[2]").text
+                        industry = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[4]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         industry = -1
 
                     # Grabs what sector the company is in
                     try:
-                        sector = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[5]/span[2]").text
+                        sector = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[5]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         sector = -1
 
                     # Grabs the revenue of the company
                     try:
-                        revenue = driver.find_element_by_xpath("//div[@id='EmpBasicInfo']/div[1]/div[1]/div[6]/span[2]").text
+                        revenue = driver.find_element(By.XPATH, "//div[@id='EmpBasicInfo']/div[1]/div[1]/div[6]/span[2]").text
                     except selenium.common.exceptions.NoSuchElementException:
                         revenue = -1
 
                     # Grabs the description provided by the company
                     try:
-                        description = driver.find_element_by_xpath("//div[@class='jobDescriptionContent desc']").text
+                        description = driver.find_element(By.XPATH, "//div[@class='jobDescriptionContent desc']").text
                     except selenium.common.exceptions.NoSuchElementException:
                         description = -1
 
@@ -228,7 +229,7 @@ def scrapper(jobs, location, num_of_jobs):
                     running = False
                 elif counter == 30:
                     # Clicks the next page button
-                    driver.find_element_by_xpath("//a[@data-test='pagination-next']").click()
+                    driver.find_element(By.XPATH, "//button[@class='nextButton css-1hq9k8 e13qs2071']").click()
                     counter = 0
                     # instead of doing the math this will just subtract the
                     # 30 jobs it just went through to determine
