@@ -1,4 +1,4 @@
-# Glassdoor Webscrapper
+# Glassdoor Webscraper
 
 This is a glassdoor scrapper that takes a user inputted job description, location, and preferred amount of jobs and returns back:
 - Company Name
